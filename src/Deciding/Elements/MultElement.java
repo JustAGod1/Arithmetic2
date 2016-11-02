@@ -12,8 +12,8 @@ import java.util.ArrayList;
  */
 public class MultElement implements IElement, Serializable, Callable {
 
-    private final ArrayList<IElement> mults;
-    private final ArrayList<MultMark> marks;
+    private ArrayList<IElement> mults = new ArrayList<>();
+    private ArrayList<MultMark> marks = new ArrayList<>();
 
     public MultElement(ArrayList<IElement> mults, ArrayList<MultMark> marks) {
 
@@ -22,7 +22,9 @@ public class MultElement implements IElement, Serializable, Callable {
     }
 
     public MultElement(IElement first, MultMark mark, IElement second) {
-        
+        mults.add(first);
+        marks.add(mark);
+        mults.add(second);
     }
 
     @Override

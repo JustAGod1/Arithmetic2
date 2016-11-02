@@ -2,6 +2,7 @@ package Deciding.Elements;
 
 import Deciding.Readers.LinearReader;
 import Enums.Mark;
+import Enums.MultMark;
 import Utilities.CloneMachine;
 
 
@@ -93,6 +94,38 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
 
     @Override
     public void raiseToExponent() {
-        MultElement me = CloneMachine.cloneObject(new MultElement())
+        if (!(getExponent() == null))
+        {
+            if ((getExponent() instanceof FloatElement) || (getExponent() instanceof BracketsElement)) {
+                if (getExponent() instanceof FloatElement) {
+                    if (((FloatElement) getExponent()).toFloat() >= 2) {
+                        BracketsElement be = (BracketsElement) CloneMachine.cloneObject(this);
+                        MultElement me = new MultElement(be, MultMark.Mult, be);
+                        for (int i = 2; i < ((FloatElement) getExponent()).value; i++) {
+                            me = (MultElement) me.multiplyBy(be);
+                        }
+                        elements.clear();
+                        elements.add(me);
+                    }
+
+                    if (((FloatElement) getExponent()).toFloat() < 1) {
+                        if (((FloatElement) getExponent()).toFloat() == 0) {
+                            elements.clear();
+                            elements.add(new FloatElement(1));
+                        } else {
+                            BracketsElement be = (BracketsElement) CloneMachine.cloneObject(this);
+                            MultElement me = new MultElement(be, MultMark.Mult, be);
+                            for (int i = 2; i < ((FloatElement) getExponent()).value; i++) {
+                                me = (MultElement) me.multiplyBy(be);
+                            }
+                            FractionElement fe = new FractionElement(new FloatElement(1), me);
+                        }
+                    }
+                }
+                else {
+                    System.out.println(String.format("Я пока не умею возводится в такую степень - \"%s\". Я %s", getExponent(), getClass().toString()));
+                }
+            }
+        }
     }
 }
