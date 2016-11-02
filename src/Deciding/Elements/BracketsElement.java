@@ -123,7 +123,7 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
                     }
                 }
                 else {
-                    System.out.println(String.format("Я пока не умею возводится в такую степень - \"%s\". Я %s", getExponent(), getClass().toString()));
+                    System.out.println(String.format(" Я пока не умею возводится в такую степень - \"%s\". Я %s", getExponent(), getClass().toString()));
                 }
             }
         }
