@@ -60,6 +60,11 @@ public class UnknownElement extends Exponentable implements IElement {
             res += String.format("(%s)", res);
         }
 
+        if (getExponent() != null) {
+            res += '^';
+            res += getExponent().renderToString(true, false);
+        }
+
         return res;
     }
 
@@ -86,7 +91,7 @@ public class UnknownElement extends Exponentable implements IElement {
     }
 
     @Override
-    public void raiseToExponent() {
-
+    public IElement raiseToExponent() {
+        return this;
     }
 }

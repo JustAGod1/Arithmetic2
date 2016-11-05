@@ -7,6 +7,7 @@ import Exceptions.ParsingException;
 import Gui.MainWindow;
 import Parsing.Parser;
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,7 +15,7 @@ import java.util.Scanner;
  * Created by Yuri on 22.10.16.
  */
 public class Main {
-    public static final String EQUATION = "(x - 0.5) * 2 - (45 * x - 2) + 1 = 9^2";
+    public static final String EQUATION = "(x^2 - 0.5) * 2 - (45 * x - 2) + 1 = 9^(2 * 3)";
     public static void main(String[] args) throws ParsingException, InterruptedException {
         Scanner sc = new Scanner(System.in);
 
@@ -34,8 +35,6 @@ public class Main {
         Equation equation = (new Parser(EQUATION)).parse();
         LinearDecider decider = new LinearDecider(equation);
         ArrayList<String> strings = decider.decide();
-
-
 
         //System.out.println(equation);
     }

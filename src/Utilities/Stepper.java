@@ -20,13 +20,29 @@ public class Stepper {
     }
 
     public void step() {
-        steps.add(equation.toString());
+        add(equation.toString());
         System.out.println(equation.toString());
     }
 
     public void step(String comment) {
-        steps.add(equation.toString() + '|' + comment);
+        add(equation.toString() + '|' + comment);
         System.out.println(equation.toString());
+    }
+
+    public void step(Equation equation) {
+        steps.add(equation.toString());
+        System.out.println(equation.toString());
+    }
+
+    private void add(String s) {
+        if ((steps.size() == 0) || !(steps.get(steps.size() - 1).equals(s))) {
+            steps.add(s);
+        }
+    }
+
+    public void newLine() {
+        steps.add("");
+        System.out.println();
     }
 
     public ArrayList<String> getSteps() {

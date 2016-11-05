@@ -42,7 +42,9 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
 
     public boolean hasNextUnknown() {
         for (int i = index; i < size(); i++) {
-            if (get(i) instanceof UnknownElement) return true;
+            if (get(i) instanceof UnknownElement) if (((UnknownElement) get(i)).getExponent() != null) {
+                return true;
+            }
         }
         return false;
     }
@@ -88,10 +90,31 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         return false;
     }
 
+    public boolean hasNextExponentable() {
+        for (int i = index; i < size(); i++) {
+            if (get(i) instanceof Exponentable) if (((Exponentable) get(i)).getExponent() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public IElement getNext() {
         IElement res = get(index);
         index++;
         return res;
+    }
+
+    public Exponentable getNextExponentable() {
+        if (!hasNextExponentable()) return null;
+
+        for (int i = index; i < size(); i++) {
+            index++;
+            if (get(i) instanceof Exponentable) if (((Exponentable) get(i)).getExponent() != null) {
+                return (Exponentable) get(i);
+            }
+        }
+        return null;
     }
 
     public FloatElement getNextFloatElement() {
@@ -284,4 +307,6 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
     public void clear() {
         elements.clear();
     }
+
+
 }

@@ -141,13 +141,18 @@ public class FloatElement extends Exponentable implements IElement, Serializable
     }
 
     @Override
-    public void raiseToExponent() {
+    public IElement raiseToExponent() {
         if (getExponent() != null) {
             if (!(getExponent() instanceof FloatElement)) {
-                if (getExponent() instanceof BracketsElement) {
-
-                }
+                System.out.println(String.format("Я пока не умею решать такие степени \"%s\". Я - %s", getExponent(), getClass().toString()));
+                setExponent(null);
+                return (IElement) CloneMachine.cloneObject(this);
+            } else {
+                setExponent(((FloatElement) getExponent()).raiseToExponent());
+                this.value = (float) Math.pow(this.value, ((FloatElement) getExponent()).value);
+                setExponent(null);
             }
         }
+        return (IElement) CloneMachine.cloneObject(this);
     }
 }

@@ -63,9 +63,23 @@ public class DecideUtil {
 
     public void simplify(LinearReader e) {
         e.reset();
+        while (e.hasNextExponentable()) {
+            Exponentable ee = e.getNextExponentable();
+            if (ee.getExponent() instanceof BracketsElement) {
+                LinearReader lr = openBrackets((BracketsElement) ee.getExponent());
+                if (lr.size() != 1) {
+                    BracketsElement be = new BracketsElement(lr.getElements(), Mark.Plus);
+                    ee.setExponent(be);
+                } else {
+                    ee.setExponent(lr.get(0));
+                }
+            }
+            e.set(e.getIndex(), ee.raiseToExponent());
+            stepper.step();
+        }
         while (e.hasNextMultiplying()) {
             MultElement element = e.getNextMultElement();
-            e.set(e.getIndex(), element.call().get(0));
+            e.set(e.getIndex(), element.call(stepper).get(0));
             stepper.step();
         }
         while (e.hasNextBrackets()) {
@@ -75,6 +89,7 @@ public class DecideUtil {
             e.remove(e.getIndex() + lr.size());
             stepper.step();
         }
+
 
 
         while (findAndSummarizeTwoElements(e)){}
@@ -142,6 +157,7 @@ public class DecideUtil {
 
     private LinearReader openBrackets(BracketsElement be) {
         LinearReader reader = be.getReader();
+        simplify(reader);
         while (reader.hasNextBrackets()) {
             BracketsElement element = reader.getNextBrackets();
 

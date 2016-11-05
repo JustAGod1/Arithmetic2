@@ -1,5 +1,7 @@
 package Deciding.Elements;
 
+import Utilities.Stepper;
+
 import java.util.ArrayList;
 
 /**
@@ -7,5 +9,5 @@ import java.util.ArrayList;
  */
 public interface Callable {
 
-    ArrayList<IElement> call();
+    ArrayList<IElement> call(Stepper stepper);
 }

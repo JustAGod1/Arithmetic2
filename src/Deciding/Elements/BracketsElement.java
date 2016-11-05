@@ -93,7 +93,7 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
     }
 
     @Override
-    public void raiseToExponent() {
+    public IElement raiseToExponent() {
         if (!(getExponent() == null))
         {
             if ((getExponent() instanceof FloatElement) || (getExponent() instanceof BracketsElement)) {
@@ -104,8 +104,7 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
                         for (int i = 2; i < ((FloatElement) getExponent()).value; i++) {
                             me = (MultElement) me.multiplyBy(be);
                         }
-                        elements.clear();
-                        elements.add(me);
+                        return me;
                     }
 
                     if (((FloatElement) getExponent()).toFloat() < 1) {
@@ -119,13 +118,16 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
                                 me = (MultElement) me.multiplyBy(be);
                             }
                             FractionElement fe = new FractionElement(new FloatElement(1), me);
+                            return fe;
                         }
                     }
                 }
                 else {
-                    System.out.println(String.format(" Я пока не умею возводится в такую степень - \"%s\". Я %s", getExponent(), getClass().toString()));
+                    System.out.println(String.format("Я пока не умею возводится в такую степень - \"%s\". Я %s", getExponent(), getClass().toString()));
                 }
             }
+            return this;
         }
+        return this;
     }
 }

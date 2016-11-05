@@ -1,9 +1,11 @@
 package Deciding.Elements;
 
+import java.io.Serializable;
+
 /**
  * Created by Yuri on 23.10.16.
  */
-public abstract class Exponentable {
+public abstract class Exponentable implements Serializable{
 
     private IElement exponent;
 
@@ -24,5 +26,5 @@ public abstract class Exponentable {
         return ((Exponentable) obj).exponent == null ? exponent == null : exponent.equals(((Exponentable) obj).exponent);
     }
 
-    public abstract void raiseToExponent();
+    public abstract IElement raiseToExponent();
 }

@@ -3,6 +3,7 @@ package Deciding.Elements;
 import Enums.Mark;
 import Enums.MultMark;
 import Utilities.CloneMachine;
+import Utilities.Stepper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -85,18 +86,21 @@ public class MultElement implements IElement, Serializable, Callable {
     }
 
     @Override
-    public ArrayList<IElement> call() {
-        IElement element = mults.get(0);
+    public ArrayList<IElement> call(Stepper stepper) {
 
-        for (int i = 1; i < mults.size(); i++) {
-            if (marks.get(i - 1) == MultMark.Mult) {
-                element = (IElement) CloneMachine.cloneObject( element.multiplyBy(mults.get(i)));
+
+        while (1 != mults.size()){
+            if (marks.get(0) == MultMark.Mult) {
+                mults.set(0, (IElement) CloneMachine.cloneObject( mults.get(0).multiplyBy(mults.get(1))));
             }
-            if (marks.get(i - 1) == MultMark.Div) {
-                element = (IElement) CloneMachine.cloneObject( element.divideBy(mults.get(i)));
+            if (marks.get(0) == MultMark.Div) {
+                mults.set(0, (IElement) CloneMachine.cloneObject( mults.get(0).divideBy(mults.get(1))));
             }
+            marks.remove(0);
+            mults.remove(1);
+            stepper.step();
         }
-
+        IElement element = mults.get(0);
         ArrayList<IElement> res = new ArrayList<>();
         res.add(element);
         return res;
