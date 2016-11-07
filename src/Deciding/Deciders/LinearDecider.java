@@ -11,20 +11,24 @@ import com.sun.istack.internal.NotNull;
 
 import java.util.ArrayList;
 
-public class LinearDecider {
-    private Equation equation;
+public class LinearDecider extends Decider {
+
     private DecideUtil util;
-    private Stepper stepper;
+
 
     public LinearDecider(Equation equation) {
-        this.equation = equation;
-        stepper = new Stepper(equation);
+        super(equation);
         util = new DecideUtil(stepper);
     }
 
+    public LinearDecider(Equation equation, Stepper stepper) {
+        super(stepper, equation);
+    }
+
     public LinearDecider(@NotNull String equation) throws ParsingException {
+
         this.equation = (new Parser(equation)).parse();
-        stepper = new Stepper(this.equation);
+        this.stepper = new Stepper(this.equation);
         util = new DecideUtil(stepper);
     }
 

@@ -15,7 +15,7 @@ import java.util.Scanner;
  * Created by Yuri on 22.10.16.
  */
 public class Main {
-    public static final String EQUATION = "(x^2 - 0.5) * 2 - (45 * x - 2) + 1 = 9^(2 * 3)";
+    public static final String EQUATION = "(x^2 - 0.5) * 2 - (45 * x - 2) + 1 = 9 + 83";
     public static void main(String[] args) throws ParsingException, InterruptedException {
         Scanner sc = new Scanner(System.in);
 
@@ -24,7 +24,7 @@ public class Main {
 
         //--------------------------------------------------------------------------------------------------------------
 
-        //MainWindow mw = new MainWindow();
+        MainWindow mw = new MainWindow();
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -32,9 +32,9 @@ public class Main {
                 "\n" +
                 "Пример: %s" +
                 "\n", EQUATION);
-        Equation equation = (new Parser(EQUATION)).parse();
-        LinearDecider decider = new LinearDecider(equation);
-        ArrayList<String> strings = decider.decide();
+        //Equation equation = (new Parser(EQUATION)).parse();
+        //LinearDecider decider = new LinearDecider(equation);
+        //ArrayList<String> strings = decider.decide();
 
         //System.out.println(equation);
     }

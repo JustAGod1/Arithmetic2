@@ -1,6 +1,9 @@
 package Deciding;
 
+import Deciding.Elements.FloatElement;
 import Deciding.Elements.IElement;
+import Deciding.Elements.MonomialElement;
+import Deciding.Patterns.Abstraction.ElementPattern;
 import Deciding.Readers.LinearReader;
 import Enums.EquationMark;
 
@@ -32,6 +35,62 @@ public class Equation {
 
     public LinearReader getRightSide() {
         return rightSide;
+    }
+
+    public int size() {
+        return getRightSide().size() + getLeftSide().size();
+    }
+
+    public boolean hasNext(ElementPattern pattern) {
+        return getLeftSide().hasNext(pattern) || getRightSide().hasNext(pattern);
+    }
+
+    public boolean haveNextMonomialElement() {
+        return getLeftSide().hasNextMonomial() || getRightSide().hasNextMonomial();
+    }
+
+    public boolean haveNextFloatElement() {
+
+        return getLeftSide().hasNextFloat() || getRightSide().hasNextFloat();
+    }
+
+    public IElement getNext(ElementPattern pattern) {
+        if (leftSide.hasNext(pattern)) {
+            return leftSide.getNext(pattern);
+        }
+        if (rightSide.hasNext(pattern)) {
+            return rightSide.getNext(pattern);
+        }
+
+        return null;
+    }
+
+    public MonomialElement getNextMonomialElement() {
+        if (leftSide.hasNextMonomial()) {
+            return leftSide.getNextMonomial();
+        }
+        if (rightSide.hasNextMonomial()) {
+            return rightSide.getNextMonomial();
+        }
+
+        return null;
+    }
+
+    public FloatElement getNextFloatElement() {
+        if (leftSide.hasNextFloat()) {
+            return leftSide.getNextFloatElement();
+        }
+        if (rightSide.hasNextFloat()) {
+            return rightSide.getNextFloatElement();
+        }
+
+        return null;
+    }
+
+
+    public void reset() {
+        getLeftSide().reset();
+        getRightSide().reset();
     }
 
     @Override

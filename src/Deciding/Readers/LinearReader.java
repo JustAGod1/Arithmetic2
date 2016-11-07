@@ -1,8 +1,10 @@
 package Deciding.Readers;
 
 import Deciding.Elements.*;
+import Deciding.Patterns.Abstraction.ElementPattern;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +35,23 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         return !(index >= size());
     }
 
+    public boolean hasNext(ElementPattern pattern) {
+        for (int i = index; i < size(); i++) {
+            IElement param = get(i);
+            try {
+                Class cl = Class.forName(pattern.getClass().getName());
+                Constructor con = cl.getConstructor(param.getClass());
+                ElementPattern p = (ElementPattern) con.newInstance(param);
+                if (p.match()) return true;
+            } catch (Exception e) {
+
+            }
+
+
+        }
+        return false;
+    }
+
     public boolean hasNextFloat() {
         for (int i = index; i < size(); i++) {
             if (get(i) instanceof FloatElement) return true;
@@ -50,7 +69,7 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
     }
 
     public boolean hasNextUnknown(char letter) {
-        for (int i = 0; i < size(); i++) {
+        for (int i = index; i < size(); i++) {
             if (get(i) instanceof UnknownElement) {
                 if (((UnknownElement) get(i)).getLetter() == letter) return true;
             }
@@ -103,6 +122,26 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         IElement res = get(index);
         index++;
         return res;
+    }
+
+    public IElement getNext(ElementPattern pattern) {
+        if (!hasNext(pattern)) return null;
+
+        for (int i = index; i < size(); i++) {
+            IElement param = get(i);
+            index++;
+            try {
+                Class cl = Class.forName(pattern.getClass().getName());
+                Constructor con = cl.getConstructor(param.getClass());
+                ElementPattern p = (ElementPattern) con.newInstance(param);
+                if (p.match()) return param;
+            } catch (Exception e) {
+
+            }
+
+
+        }
+        return null;
     }
 
     public Exponentable getNextExponentable() {
@@ -245,7 +284,10 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
 
     @Override
     public int size() {
-        return elements.size();
+        if (!(elements.size() == 1)) return elements.size();
+        else if (get(0).equals(new FloatElement(0))) return 0;
+        else return 1;
+
     }
 
     @Override
@@ -306,6 +348,7 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
     @Override
     public void clear() {
         elements.clear();
+        add(new FloatElement(0));
     }
 
 

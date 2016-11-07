@@ -8,9 +8,13 @@ import Deciding.Patterns.Abstraction.Pattern;
  */
 public abstract class EquationPattern implements Pattern {
 
-    Equation equation;
+    private Equation equation;
 
     public EquationPattern(Equation equation) {
         this.equation = equation;
+    }
+
+    public Equation getEquation() {
+        return equation;
     }
 }

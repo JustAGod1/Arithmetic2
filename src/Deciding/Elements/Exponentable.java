@@ -23,7 +23,11 @@ public abstract class Exponentable implements Serializable{
             return false;
         }
 
-        return ((Exponentable) obj).exponent == null ? exponent == null : exponent.equals(((Exponentable) obj).exponent);
+        try {
+            return exponent.equals(((Exponentable) obj).exponent);
+        } catch (NullPointerException e) {
+            return exponent == ((Exponentable) obj).exponent;
+        }
     }
 
     public abstract IElement raiseToExponent();

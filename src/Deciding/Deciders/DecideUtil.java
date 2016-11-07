@@ -2,6 +2,7 @@ package Deciding.Deciders;
 
 import Deciding.Elements.*;
 import Deciding.Equation;
+import Deciding.Patterns.QuadraticEquationPattern;
 import Deciding.Readers.LinearReader;
 import Enums.Mark;
 import Utilities.Stepper;
@@ -58,7 +59,7 @@ public class DecideUtil {
     }
 
     public boolean isCompletedEquation(Equation e) {
-        return (e.getLeftSide().size() == 1) && (e.getLeftSide().get(0) instanceof MonomialElement) && (e.getRightSide().size() == 1) && (e.getRightSide().get(0) instanceof FloatElement);
+        return ((e.getLeftSide().size() == 1) && (e.getLeftSide().get(0) instanceof MonomialElement) && (e.getRightSide().size() == 1) && (e.getRightSide().get(0) instanceof FloatElement)) || (new QuadraticEquationPattern(e)).match();
     }
 
     public void simplify(LinearReader e) {
@@ -80,7 +81,7 @@ public class DecideUtil {
         while (e.hasNextMultiplying()) {
             MultElement element = e.getNextMultElement();
             e.set(e.getIndex(), element.call(stepper).get(0));
-            stepper.step();
+
         }
         while (e.hasNextBrackets()) {
             BracketsElement be = e.getNextBrackets();
