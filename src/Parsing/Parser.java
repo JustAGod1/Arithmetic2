@@ -94,7 +94,9 @@ public class Parser {
                 }
 
                 case '*':
-                case '/': {
+                case '/':
+                case ':':
+                case '\\':{
                     addContainer();
                     helper.addMulting(MultMark.parse(letter));
                     break;
@@ -114,7 +116,7 @@ public class Parser {
 
                 case 'x':
                 case 'y':
-                case 't':
+                case 'w':
                 case 'z': {
                     addUnknown(letter);
                     break;

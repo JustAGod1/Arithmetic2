@@ -3,7 +3,7 @@ package Deciding;
 import Deciding.Elements.FloatElement;
 import Deciding.Elements.IElement;
 import Deciding.Elements.MonomialElement;
-import Deciding.Patterns.Abstraction.ElementPattern;
+import Deciding.Patterns.ElementPattern;
 import Deciding.Readers.LinearReader;
 import Enums.EquationMark;
 

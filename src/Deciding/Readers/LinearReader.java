@@ -1,7 +1,8 @@
 package Deciding.Readers;
 
 import Deciding.Elements.*;
-import Deciding.Patterns.Abstraction.ElementPattern;
+import Deciding.Patterns.ElementPattern;
+import Deciding.Patterns.Matcher;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -21,6 +22,11 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         this.elements = elements;
     }
 
+    public LinearReader(IElement element) {
+        elements = new ArrayList<>();
+        elements.add(element);
+    }
+
 
     public boolean hasNextIt(IElement element) {
         if (element instanceof FloatElement) return hasNextFloat();
@@ -38,16 +44,19 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
     public boolean hasNext(ElementPattern pattern) {
         for (int i = index; i < size(); i++) {
             IElement param = get(i);
-            try {
-                Class cl = Class.forName(pattern.getClass().getName());
-                Constructor con = cl.getConstructor(param.getClass());
-                ElementPattern p = (ElementPattern) con.newInstance(param);
-                if (p.match()) return true;
-            } catch (Exception e) {
-
+            Matcher m = pattern.getMatcher(param);
+            if (m.match()) {
+                return true;
             }
 
 
+        }
+        return false;
+    }
+
+    public boolean hasNextIndex() {
+        for (int i = index; i < size(); i++) {
+            if (get(i) instanceof Index) return true;
         }
         return false;
     }
@@ -130,19 +139,19 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         for (int i = index; i < size(); i++) {
             IElement param = get(i);
             index++;
-            try {
-                Class cl = Class.forName(pattern.getClass().getName());
-                Constructor con = cl.getConstructor(param.getClass());
-                ElementPattern p = (ElementPattern) con.newInstance(param);
-                if (p.match()) return param;
-            } catch (Exception e) {
+            Matcher m = pattern.getMatcher(param);
 
-            }
+            if (m.match()) return get(i);
 
 
         }
         return null;
     }
+
+    /**
+     *
+     * @return Element with exponent, that doesn't equals null
+     */
 
     public Exponentable getNextExponentable() {
         if (!hasNextExponentable()) return null;
@@ -152,6 +161,16 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
             if (get(i) instanceof Exponentable) if (((Exponentable) get(i)).getExponent() != null) {
                 return (Exponentable) get(i);
             }
+        }
+        return null;
+    }
+
+    public Index getNextIndex() {
+        if (!hasNextIndex()) return null;
+
+        for (int i = index; i < size(); i++) {
+            index++;
+            if (get(i) instanceof Index) return (Index) get(i);
         }
         return null;
     }
@@ -285,8 +304,10 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
     @Override
     public int size() {
         if (!(elements.size() == 1)) return elements.size();
-        else if (get(0).equals(new FloatElement(0))) return 0;
-        else return 1;
+        else if (get(0).equals(new FloatElement(0)))
+            return 0;
+        else
+            return 1;
 
     }
 
@@ -351,5 +372,12 @@ public class LinearReader implements Serializable, Iterable<IElement>, Collectio
         add(new FloatElement(0));
     }
 
-
+    @Override
+    public String toString() {
+        String res = get(0).renderToString(false, false) + " ";
+        for (int i = 1; i < size(); i++) {
+            res += get(i).renderToString(false, true) + ' ';
+        }
+        return res;
+    }
 }

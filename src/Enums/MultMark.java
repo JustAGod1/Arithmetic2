@@ -6,8 +6,14 @@ package Enums;
 public enum MultMark {Mult, Div;
 
     public static MultMark parse(char mark) {
-        if (mark == '/') return Div;
-        if (mark == '*') return Mult;
+        switch (mark) {
+            case ':':
+            case '/':
+            case '\\':
+                return Div;
+            case '*':
+                return Mult;
+        }
         return null;
     }
 

@@ -1,7 +1,6 @@
 package Deciding.Elements;
 
 
-import Deciding.Deciders.DecideUtil;
 import Enums.Mark;
 import Utilities.CloneMachine;
 
@@ -10,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by Yuri on 22.10.16.
  */
-public class FloatElement extends Exponentable implements IElement, Serializable {
+public class FloatElement extends Exponentable implements Index, Serializable {
 
     public float value;
     private Mark mark;
@@ -35,6 +34,12 @@ public class FloatElement extends Exponentable implements IElement, Serializable
 
     public Mark getMark() {
         return mark;
+    }
+
+    @Override
+    public void setMark(Mark mark) {
+
+        this.mark = mark;
     }
 
     public float toFloat() {

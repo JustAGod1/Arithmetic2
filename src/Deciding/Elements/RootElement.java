@@ -7,9 +7,9 @@ import Enums.Mark;
  */
 public class RootElement implements IElement {
     IElement base;
-    IElement index;
+    Index index;
 
-    public RootElement(IElement base, IElement index) {
+    public RootElement(IElement base, Index index) {
         this.base = base;
         this.index = index;
     }
@@ -52,5 +52,10 @@ public class RootElement implements IElement {
     @Override
     public Mark getMark() {
         return null;
+    }
+
+    @Override
+    public void setMark(Mark mark) {
+        index.setMark(mark);
     }
 }

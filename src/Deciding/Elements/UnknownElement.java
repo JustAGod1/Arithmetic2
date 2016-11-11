@@ -74,6 +74,12 @@ public class UnknownElement extends Exponentable implements IElement {
     }
 
     @Override
+    public void setMark(Mark mark) {
+
+        this.mark = mark;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof UnknownElement)) {
             return false;

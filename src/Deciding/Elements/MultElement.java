@@ -86,6 +86,11 @@ public class MultElement implements IElement, Serializable, Callable {
     }
 
     @Override
+    public void setMark(Mark mark) {
+
+    }
+
+    @Override
     public ArrayList<IElement> call(Stepper stepper) {
 
 

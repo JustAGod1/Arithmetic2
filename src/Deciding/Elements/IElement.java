@@ -18,4 +18,6 @@ public interface IElement extends Serializable {
     String renderToString(boolean needBrackets, boolean needMark);
 
     Mark getMark();
+
+    void setMark(Mark mark);
 }

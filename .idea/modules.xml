@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Arithmetic 2.iml" filepath="$PROJECT_DIR$/Arithmetic 2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ExampleBuilder/ExampleBuilder.iml" filepath="$PROJECT_DIR$/ExampleBuilder/ExampleBuilder.iml" />
     </modules>
   </component>
 </project>

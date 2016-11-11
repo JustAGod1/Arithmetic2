@@ -31,8 +31,8 @@ public class QuadraticEquationPattern extends EquationPattern {
         Equation e = getEquation();
         e.reset();
 
-        return e.hasNext(new QuadraticUnknownPattern(new FloatElement(1)));
-
+        ElementPattern pattern = PatternFactory.createPattern("|[0-9]*[w-z]^2|");
+        return e.hasNext(pattern);
     }
 
     @Override

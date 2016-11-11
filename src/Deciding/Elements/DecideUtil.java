@@ -1,6 +1,5 @@
-package Deciding.Deciders;
+package Deciding.Elements;
 
-import Deciding.Elements.*;
 import Deciding.Equation;
 import Deciding.Patterns.QuadraticEquationPattern;
 import Deciding.Readers.LinearReader;
@@ -16,14 +15,48 @@ public class DecideUtil {
 
 
     public Stepper stepper;
+    private static DecideUtil instance;
 
-    public DecideUtil(Stepper stepper) {
+    private DecideUtil(Stepper stepper) {
         this.stepper = stepper;
+    }
+
+    public static void create(Stepper stepper) {
+        instance = new DecideUtil(stepper);
+    }
+
+    public static DecideUtil getInstance() {
+        return instance;
     }
 
     public static IElement multElements(IElement first, IElement second) {
 
         return null;
+    }
+
+    public void rightToLeft(Equation equation) {
+        LinearReader right = equation.getRightSide();
+        LinearReader left = equation.getLeftSide();
+        while (right.hasNext()) {
+            IElement element = right.getNext();
+            element.changeMark();
+            right.remove(element);
+            left.add(element);
+        }
+    }
+
+    /**
+     *
+     * @param lr Linear reader, that contains elements that you need to multiply
+     * @param multiplier
+     */
+
+    public static void multReader(LinearReader lr, IElement multiplier) {
+        lr.reset();
+        while (lr.hasNext()) {
+            IElement element = lr.getNext().multiplyBy(multiplier);
+            lr.set(lr.getIndex(), element);
+        }
     }
 
     public static Mark multiplyMarks(Mark first, Mark second) {
@@ -62,8 +95,9 @@ public class DecideUtil {
         return ((e.getLeftSide().size() == 1) && (e.getLeftSide().get(0) instanceof MonomialElement) && (e.getRightSide().size() == 1) && (e.getRightSide().get(0) instanceof FloatElement)) || (new QuadraticEquationPattern(e)).match();
     }
 
-    public void simplify(LinearReader e) {
+    public boolean simplify(LinearReader e) {
         e.reset();
+        boolean res = false;
         while (e.hasNextExponentable()) {
             Exponentable ee = e.getNextExponentable();
             if (ee.getExponent() instanceof BracketsElement) {
@@ -77,11 +111,12 @@ public class DecideUtil {
             }
             e.set(e.getIndex(), ee.raiseToExponent());
             stepper.step();
+            res = true;
         }
         while (e.hasNextMultiplying()) {
             MultElement element = e.getNextMultElement();
             e.set(e.getIndex(), element.call(stepper).get(0));
-
+            res = true;
         }
         while (e.hasNextBrackets()) {
             BracketsElement be = e.getNextBrackets();
@@ -89,18 +124,21 @@ public class DecideUtil {
             e.addAll(e.indexOf(be), lr);
             e.remove(e.getIndex() + lr.size());
             stepper.step();
+            res = true;
         }
 
 
 
         while (findAndSummarizeTwoElements(e)){}
+        return res;
     }
 
-    public void sortElements(Equation e) {
+    public boolean sortElements(Equation e) {
         LinearReader l = e.getLeftSide();
         l.reset();
         LinearReader r = e.getRightSide();
         r.reset();
+        boolean res = false;
 
         while(r.hasNextMonomial()) {
             MonomialElement me = r.getNextMonomial();
@@ -108,27 +146,29 @@ public class DecideUtil {
             r.remove(r.getIndex());
             l.add(me);
             stepper.step();
+            res = true;
         }
 
-        while (l.hasNextFloat()) {
-            FloatElement fe = l.getNextFloatElement();
+        while (l.hasNextIndex()) {
+            Index fe = l.getNextIndex();
             fe.changeMark();
             l.remove(l.getIndex());
             r.add(fe);
             stepper.step();
-
+            res = true;
         }
+        return res;
     }
 
     private boolean findAndSummarizeTwoElements(LinearReader e) {
         e.reset();
         boolean result = false;
         while (e.hasNextFloat()) {
-            FloatElement fe1 = e.getNextFloatElement();
-            if (!e.hasNextFloat()) break;
-            FloatElement fe2 = e.getNextFloatElement();
+            Index fe1 = e.getNextIndex();
+            if (!e.hasNextIndex()) break;
+            Index fe2 = e.getNextIndex();
 
-            FloatElement res = summarizeFloats(fe1, fe2);
+            Index res = summarizeIndexes(fe1, fe2);
             e.remove(fe1);
             e.remove(fe2);
             e.add(res);
@@ -144,7 +184,7 @@ public class DecideUtil {
                 continue;
             MonomialElement me2 = e.getNextSimiliarMonomial(me1);
 
-            MonomialElement res = new MonomialElement(summarizeFloats(me1.getIndex(), me2.getIndex()), me1.getElements());
+            MonomialElement res = new MonomialElement(summarizeIndexes(me1.getIndex(), me2.getIndex()), me1.getElements());
             e.remove(me1);
             e.remove(me2);
             e.add(res);
@@ -182,8 +222,42 @@ public class DecideUtil {
 
     }
 
-    private FloatElement summarizeFloats(FloatElement first, FloatElement second) {
-        return new FloatElement(first.toFloat() + second.toFloat());
+    public Index summarizeIndexes(Index first, Index second) {
+        if ((first instanceof FloatElement) && (second instanceof FloatElement)) return new FloatElement(((FloatElement) first).toFloat() + ((FloatElement) second).toFloat());
+        FractionElement f;
+        FractionElement s;
+        if (first instanceof  FloatElement) {
+            f = new FractionElement(first, new FloatElement(1));
+        } else {
+            f = (FractionElement) first;
+        }
+
+        if (second instanceof FloatElement) {
+            s = new FractionElement(second, new FloatElement(1));
+        } else {
+            s = (FractionElement) second;
+        }
+
+        return summarizeFractions(f, s);
+
+    }
+
+    private FractionElement summarizeFractions(FractionElement first, FractionElement second) {
+        /*simplify(first.getDown().getReader());
+        simplify(second.getDown().getReader());
+
+        //FractionElement first = (FractionElement) CloneMachine.cloneObject(first);
+        first.setDown((BracketsElement) first.getDown().multiplyBy(second.getDown()));
+        stepper.step();
+        first.setUp((BracketsElement) first.getUp().multiplyBy(second.getDown()));
+        BracketsElement be = first.getUp();
+        be.setMark(Mark.Plus);
+        LinearReader reader = be.getReader();
+        reader.add(be.multiplyBy(first.getDown()));*/
+
+        // FIXME: 09.11.16 Раскоментить
+
+        return first;
     }
 
 

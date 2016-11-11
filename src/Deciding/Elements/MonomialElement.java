@@ -10,10 +10,10 @@ import java.util.ArrayList;
  */
 public class MonomialElement implements IElement {
 
-    private FloatElement index = new FloatElement(1, Mark.Plus);
+    private Index index = new FloatElement(1, Mark.Plus);
     private ArrayList<UnknownElement> elements = new ArrayList<>();
 
-    public MonomialElement(FloatElement index, UnknownElement element) {
+    public MonomialElement(Index index, UnknownElement element) {
         this.index = index;
         elements.add(element);
         check();
@@ -30,13 +30,13 @@ public class MonomialElement implements IElement {
         check();
     }
 
-    public MonomialElement(FloatElement index, ArrayList<UnknownElement> elements) {
+    public MonomialElement(Index index, ArrayList<UnknownElement> elements) {
 
         this.index = index;
         this.elements = elements;
     }
 
-    public void setIndex(FloatElement index) {
+    public void setIndex(Index index) {
         this.index = index;
     }
 
@@ -44,7 +44,7 @@ public class MonomialElement implements IElement {
 
     }
 
-    public FloatElement getIndex() {
+    public Index getIndex() {
         return index;
     }
 
@@ -63,8 +63,23 @@ public class MonomialElement implements IElement {
 
     @Override
     public IElement multiplyBy(IElement m) {
-        if (m instanceof FloatElement) {
-            index = (FloatElement) index.multiplyBy(m);
+        if (m instanceof Index) {
+            index = (Index) index.multiplyBy(m);
+        }
+        else if (m instanceof MonomialElement) {
+            index = (Index) ((MonomialElement) m).index.multiplyBy(index);
+            int ln = elements.size();
+            for (int i = 0; i < ln; i++) {
+                UnknownElement ue = elements.get(i);
+                for (int j = 0; j < ((MonomialElement) m).elements.size(); j++) {
+                    UnknownElement tmp = ((MonomialElement) m).elements.get(j);
+                    if ((ue.getExponent() instanceof Index) && (tmp.getExponent() instanceof Index)) {
+                        ue.setExponent(DecideUtil.getInstance().summarizeIndexes((Index) tmp.getExponent(), (Index) ue.getExponent()));
+                    } else if (!((ue.getExponent() instanceof RootElement) || (tmp.getExponent() instanceof RootElement))) {
+
+                    }
+                }
+            }
         }
 
         return this;
@@ -72,9 +87,13 @@ public class MonomialElement implements IElement {
 
     @Override
     public IElement divideBy(IElement d) {
-
-        return (IElement) CloneMachine.cloneObject(new FractionElement(this, d));
-
+        if (equals(d)) return new FloatElement(1);
+        if (!(d instanceof Index)) {
+            return (IElement) CloneMachine.cloneObject(new FractionElement(this, d));
+        } else {
+            index = (Index) index.divideBy(d);
+            return this;
+        }
 
     }
 
@@ -108,6 +127,11 @@ public class MonomialElement implements IElement {
     }
 
     @Override
+    public void setMark(Mark mark) {
+        index.setMark(mark);
+    }
+
+    @Override
     public String toString() {
         String res = "|";
         res += index;
@@ -116,5 +140,12 @@ public class MonomialElement implements IElement {
         }
         res += "|";
         return res;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MonomialElement)) return false;
+        MonomialElement target = (MonomialElement) obj;
+        return (isSimilarMonomial(target) && index.equals(target.index));
     }
 }

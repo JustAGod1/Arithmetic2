@@ -1,6 +1,7 @@
 package Parsing.Containers;
 
 import Deciding.Elements.IElement;
+import Deciding.Elements.Index;
 import Deciding.Elements.RootElement;
 
 /**
@@ -19,6 +20,6 @@ public class RootContainer implements Container {
 
     @Override
     public IElement toElement() {
-        return new RootElement(base.toElement(), index.toElement());
+        return new RootElement(base.toElement(), (Index) index.toElement());
     }
 }

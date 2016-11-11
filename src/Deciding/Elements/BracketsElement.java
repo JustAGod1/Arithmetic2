@@ -27,6 +27,12 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
     }
 
     @Override
+    public void setMark(Mark mark) {
+
+        this.mark = mark;
+    }
+
+    @Override
     public String toString() {
         String res = "";
 
@@ -36,6 +42,8 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
         res = res.trim();
         return String.format("%s(%s)", mark.toString(), res);
     }
+
+
 
     @Override
     public void changeMark() {
@@ -54,7 +62,9 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
         LinearReader reader = res.getReader();
 
         for (int i = 0; i < reader.size(); i++) {
-            reader.set(i, reader.get(i).multiplyBy(multiplier));
+            IElement element = reader.get(i);
+            IElement multed = element.multiplyBy(multiplier);
+            reader.set(i, multed);
         }
 
         return res;
@@ -64,7 +74,22 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
 
     @Override
     public IElement divideBy(IElement divider) {
-        return null;
+        if (divider instanceof Index) {
+            for (int i = 0; i < elements.size(); i++) {
+                elements.set(i, elements.get(i).divideBy(divider));
+            }
+            return this;
+        } else return (IElement) CloneMachine.cloneObject(new FractionElement(this, divider));
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BracketsElement)) return false;
+
+        BracketsElement target = (BracketsElement) obj;
+
+        return (target.elements.equals(elements)) && (target.mark.equals(mark));
     }
 
     @Override
@@ -88,6 +113,10 @@ public class BracketsElement extends Exponentable implements IElement, Serializa
         res = res.trim();
 
         res += ')';
+        if (!(getExponent() == null)) {
+            res += '^';
+            res += getExponent().renderToString(true, false);
+        }
 
         return res;
     }

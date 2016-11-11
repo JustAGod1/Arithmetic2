@@ -1,12 +1,12 @@
 package Deciding.Patterns.Abstraction;
 
 import Deciding.Equation;
-import Deciding.Patterns.Abstraction.Pattern;
+
 
 /**
  * Created by Yuri on 05.11.16.
  */
-public abstract class EquationPattern implements Pattern {
+public abstract class EquationPattern {
 
     private Equation equation;
 
@@ -17,4 +17,9 @@ public abstract class EquationPattern implements Pattern {
     public Equation getEquation() {
         return equation;
     }
+
+
+    public abstract boolean find();
+
+    public abstract boolean match();
 }
